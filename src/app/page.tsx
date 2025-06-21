@@ -1,53 +1,60 @@
 "use client"
-import CreateWallet from "@/components/CreateWallet";
-import ExistingWallet from "@/components/ExistingWallet";
+
+import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { BrandCard } from "@/components/BrandCard";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Wallets } from "@/components/Wallets";
-import { motion } from "framer-motion";
-import { RocketIcon } from "lucide-react";
+import { WalletCard } from "@/components/WalletCard";
+import { AddWalletDialog } from "@/components/AddWalletDialog";
 
 export default function Home() {
-  return (
-    <div>
-      <div className="mt-10">
-        <div className="flex flex-col items-center">
-          <motion.h1
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center mb-6 flex items-center justify-center gap-3"
-          >
-            <RocketIcon className="h-10 w-10 text-gray-300 drop-shadow-md animate-pulse" />
-            <span className="text-5xl md:text-6xl font-extrabold tracking-widest bg-gradient-to-r from-white via-gray-300 to-gray-400 text-transparent bg-clip-text">
-              DRYFT
-            </span>
-          </motion.h1>
+    const [selectedFilter, setSelectedFilter] = useState("all");
+    const solanawallets = JSON.parse(localStorage.getItem("solanawallets") || "[]");
+    const ethwallets = JSON.parse(localStorage.getItem("ethwallets") || "[]");
+    const router = useRouter();
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-            className="text-gray-400 text-md md:text-lg text-center max-w-xl mx-auto"
-          >
-            Web based wallet for Solana and Ethereum
-          </motion.p>
+    if (solanawallets.length === 0 && ethwallets.length === 0) {
+        router.replace("/wallet");
+        toast.warning("Create a new wallet or import your existing wallet")
+    };
+
+    let filteredWallets = [...solanawallets, ...ethwallets];
+    
+    if (selectedFilter === "solana") filteredWallets = solanawallets;
+    else if (selectedFilter === "ethereum") filteredWallets = ethwallets;
+    else filteredWallets = [...solanawallets, ...ethwallets];
+
+    filteredWallets.sort((a,b) => a.createdAt - b.createdAt);
+
+    return (
+        <div className="p-10">
+            <BrandCard />
+            <div className="flex justify-between items-center mt-7">
+                <h1 className="font-bold text-3xl">My Wallets</h1>
+                <div className="flex items-center gap-10">
+                    <AddWalletDialog />
+                    <Select onValueChange={(value) => setSelectedFilter(value)}  defaultValue={"all"}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Wallet"/>
+                        </SelectTrigger>
+                        <SelectContent className="focus-visible:outline-none">
+                            <SelectItem value="all">All Wallets</SelectItem>
+                            <SelectItem value="solana">Solana</SelectItem>
+                            <SelectItem value="ethereum">Ethereum</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 mt-10 gap-5">
+                {filteredWallets.map((eachItem, index) => (
+                    <WalletCard key={index} wallet={eachItem} />
+                ))}
+            </div>
+
+            <Toaster richColors/>
         </div>
-        <div className="grid grid-cols-1 w-[50%] md:w-[35%] mx-auto mt-10">
-          <Tabs defaultValue="createWallet" className="w-full">
-            <TabsList className="w-full bg-gray-800 rounded-t-lg flex justify-between">
-              <TabsTrigger className="w-full py-3 text-center cursor-pointer text-sm font-medium text-gray-300 hover:text-white data-[state=active]:bg-gray-900 data-[state=active]:text-white transition-colors duration-300 rounded-t-lg" value="createWallet">Create a New Wallet</TabsTrigger>
-              <TabsTrigger className="w-full py-3 text-center cursor-pointer text-sm font-medium text-gray-300 hover:text-white data-[state=active]:bg-gray-900 data-[state=active]:text-white transition-colors duration-300 rounded-t-lg" value="existingWallet">Add an Existing Wallet</TabsTrigger>
-            </TabsList>
-            <TabsContent value="createWallet"><CreateWallet /></TabsContent>
-            <TabsContent value="existingWallet"><ExistingWallet /></TabsContent>
-          </Tabs>
-        </div>
-
-
-        <Wallets />
-        <Toaster richColors />
-      </div>
-    </div>
-  );
+    )
 }

@@ -1,6 +1,6 @@
 export interface Wallet {
-    publicKey: string,
-    privateKey: string,
+    publickey: string,
+    privatekey: string,
     account: number,
     network: "solana" | "ethereum",
     createdAt: string

@@ -22,8 +22,8 @@ export default function CreateWallet(){
                     </CardDescription>
                 </CardHeader>
                 <CardFooter className="grid grid-cols-2 items-center gap-6 p-4">
-                <CreateWalletDialog wallet="Solana"/>
-                <CreateWalletDialog wallet="Ethereum"/>
+                    <CreateWalletDialog wallet="Solana"/>
+                    <CreateWalletDialog wallet="Ethereum"/>
                 </CardFooter>
             </Card>
         </div>
