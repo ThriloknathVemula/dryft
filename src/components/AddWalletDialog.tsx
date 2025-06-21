@@ -1,9 +1,13 @@
+"use client";
+
 import { addEthWallet, addSolanaWallet } from "@/config/wallet";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from "./ui/dialog";
+import { useRouter } from "next/navigation";
 
 export const AddWalletDialog = () => {
     const mnemonic = localStorage.getItem("mnemonic");
+    const router = useRouter();
 
     return (
         <Dialog>
@@ -18,10 +22,16 @@ export const AddWalletDialog = () => {
                 </DialogHeader>
                 <DialogFooter className="flex justify-center items-center gap-7 mx-auto">
                     <DialogTrigger asChild>
-                        <Button onClick={() => {addSolanaWallet(mnemonic)}} variant={"secondary"} className="cursor-pointer">Solana Wallet</Button>
+                        <Button onClick={() => {
+                            addSolanaWallet(mnemonic)
+                            router.refresh();
+                        }} variant={"secondary"} className="cursor-pointer">Solana Wallet</Button>
                     </DialogTrigger>
                     <DialogTrigger asChild>
-                        <Button onClick={() => {addEthWallet(mnemonic)}} variant={"secondary"} className="cursor-pointer">Ethereum Wallet</Button>
+                        <Button onClick={() => {
+                            addEthWallet(mnemonic)
+                            router.refresh();
+                        }} variant={"secondary"} className="cursor-pointer">Ethereum Wallet</Button>
                     </DialogTrigger>
                 </DialogFooter>
             </DialogContent>

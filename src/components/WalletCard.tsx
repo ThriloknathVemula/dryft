@@ -1,3 +1,5 @@
+"use client";
+
 import { Wallet } from "@/types";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -6,14 +8,36 @@ import { Button } from "./ui/button";
 import { Copy, Eye, EyeOff, Trash } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const WalletCard = ({wallet} : {wallet: Wallet}) => {
     const badgeStyling = wallet.network === "solana" ? "bg-blue-100 text-blue-400" : "bg-green-100 text-green-400";
     const [show, setShow] = useState(false);
+    const router = useRouter();
 
     const copyKeyToClipboard = (key: string, type: string) => {
         navigator.clipboard.writeText(key);
         toast.success(`Copied ${type} to clipboard`)
+    }
+
+    const deleteWallet = () => {
+        if (wallet.network === "solana") {
+            const solanawallets:Wallet[] = JSON.parse(localStorage.getItem("solanawallets") || "[]");
+            const updatedwallets = solanawallets.filter(each => each.account !== wallet.account);
+            localStorage.setItem("solanawallets", JSON.stringify(updatedwallets));
+            
+            router.refresh();
+        }
+
+        if (wallet.network === "ethereum") {
+            const ethwallets: Wallet[] = JSON.parse(localStorage.getItem("ethwallets") || "[]");
+            const updatedwallets = ethwallets.filter(each => each.account !== wallet.account);
+            localStorage.setItem("ethwallets", JSON.stringify(updatedwallets));
+
+            router.refresh();
+        }
+
+        toast.error("Wallet deleted successfully");
     }
 
     return (
@@ -33,7 +57,7 @@ export const WalletCard = ({wallet} : {wallet: Wallet}) => {
                         </Badge>
                     </div>
                 </div>
-                <Button variant={"ghost"} className="text-red-400 hover:text-red-600 p-1 dark">
+                <Button onClick={deleteWallet} variant={"ghost"} className="text-red-400 hover:text-red-600 p-1 dark cursor-pointer">
                     <Trash className="w-5 h-5"/>
                 </Button>
             </CardHeader>

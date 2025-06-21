@@ -11,18 +11,17 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "./ui/dialog";
-import { generateMnemonic, mnemonicToSeed } from "bip39";
+import { generateMnemonic } from "bip39";
 import { PhraseItem } from "./PhraseItem";
 import { CopyIcon } from "lucide-react";
 import { toast } from "sonner";
-import { derivePath } from "ed25519-hd-key";
-import { Keypair } from "@solana/web3.js";
-import { Wallet, HDNodeWallet } from "ethers";
 import { addEthWallet, addSolanaWallet } from "@/config/wallet";
+import { useRouter } from "next/navigation";
 
 
 export const CreateWalletDialog = ({ wallet }: { wallet: string }) => {
     const [mnemonic, setMnemonic] = useState<string | null>(null);
+    const router = useRouter();
 
     const createMnemonic = () => {
         const mnemonic = generateMnemonic();
@@ -44,10 +43,12 @@ export const CreateWalletDialog = ({ wallet }: { wallet: string }) => {
         
         if (wallet.toLowerCase() === "solana") {
             addSolanaWallet(mnemonic); 
+            router.replace("/");
         }
 
         if (wallet.toLowerCase() === "ethereum") {
             addEthWallet(mnemonic);
+            router.replace("/");
         }  
     }
 

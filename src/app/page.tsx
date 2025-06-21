@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { WalletCard } from "@/components/WalletCard";
 import { AddWalletDialog } from "@/components/AddWalletDialog";
+import { Button } from "@/components/ui/button";
+import { DeleteWalletDialog } from "@/components/DeleteWalletDialog";
 
 export default function Home() {
     const [selectedFilter, setSelectedFilter] = useState("all");
@@ -26,7 +28,7 @@ export default function Home() {
     else if (selectedFilter === "ethereum") filteredWallets = ethwallets;
     else filteredWallets = [...solanawallets, ...ethwallets];
 
-    filteredWallets.sort((a,b) => a.createdAt - b.createdAt);
+    filteredWallets.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
     return (
         <div className="p-10">
@@ -34,7 +36,10 @@ export default function Home() {
             <div className="flex justify-between items-center mt-7">
                 <h1 className="font-bold text-3xl">My Wallets</h1>
                 <div className="flex items-center gap-10">
-                    <AddWalletDialog />
+                    <div className="flex items-center gap-5">
+                        <AddWalletDialog />
+                        <DeleteWalletDialog />
+                    </div>
                     <Select onValueChange={(value) => setSelectedFilter(value)}  defaultValue={"all"}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Wallet"/>

@@ -4,16 +4,15 @@ import { derivePath } from "ed25519-hd-key";
 import { HDNodeWallet, Wallet } from "ethers";
 import { toast } from "sonner";
 
-const solanawallets = JSON.parse(localStorage.getItem("solanawallets") || "[]");
-const ethwallets = JSON.parse(localStorage.getItem("ethwallets") || "[]");
-
 export const addSolanaWallet = async (mnemonic: string | null) => {
     if (!mnemonic) {
         toast.error("Something went wrong");
         return;
     }
 
-    const currentIndex = solanawallets.length > 0 ? solanawallets.length : 0;
+    const solanawallets = JSON.parse(localStorage.getItem("solanawallets") || "[]");
+
+    const currentIndex = solanawallets.length;
     const derivationpath = `m/44'/501'/${currentIndex}'/0'`
     const seedphrase = await mnemonicToSeed(mnemonic);
     const derivedSeed = derivePath(derivationpath, seedphrase.toString('hex'));
@@ -41,6 +40,7 @@ export const addEthWallet = async (mnemonic: string | null) => {
         return;
     }
 
+    const ethwallets = JSON.parse(localStorage.getItem("ethwallets") || "[]");
     const currentIndex = ethwallets.length > 0 ? ethwallets.length : 0;
     const derivationpath = `m/44'/60'/${currentIndex}'/0'`;
     const seedphrase = await mnemonicToSeed(mnemonic);
