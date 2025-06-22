@@ -22,8 +22,6 @@ export default function ExistingWallet() {
     const [phraseArr, setPhraseArr] = useState<string[]>(Array(12).fill(""));
     const router = useRouter();
 
-    console.log(phraseArr);
-
     const handleChange = (index: number, value: string) => {
         const updated = [...phraseArr];
         updated[index] = value;
@@ -32,7 +30,6 @@ export default function ExistingWallet() {
 
     const importExistingWallet = async (accountIndex: number = 0) => {
         const mnemonic = phraseArr.join(" ");
-        console.log(mnemonic)
 
         if (!validateMnemonic(mnemonic)) {
             toast.error("Invalid Secret Phrase. Please check again.");

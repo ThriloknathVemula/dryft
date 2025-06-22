@@ -4,10 +4,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Button } from "./ui/button"
-import { useState } from "react"
-import { generateMnemonic } from "bip39";
+} from "@/components/ui/card";
 import { CreateWalletDialog } from "./CreateWalletDialog";
 
 

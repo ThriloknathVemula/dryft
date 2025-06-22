@@ -3,19 +3,18 @@
 import { toast } from "sonner";
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-import { useRouter } from "next/navigation";
 
 export const DeleteWalletDialog = () => {
-    const router = useRouter();
-
     const deleteAllWallets = () => {
-        localStorage.removeItem("mnemonic");
-        localStorage.removeItem("solanawallets");
-        localStorage.removeItem("ethwallets");
-        localStorage.clear();
+        if (typeof window  !== "undefined") {
+            localStorage.removeItem("mnemonic");
+            localStorage.removeItem("solanawallets");
+            localStorage.removeItem("ethwallets");
+            localStorage.clear();
 
-        toast.error("Deleted all wallets");
-        router.refresh();
+            toast.error("Deleted all wallets");
+            window.dispatchEvent(new Event("walletsUpdated"))
+        }
     }
 
     return (

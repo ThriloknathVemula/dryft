@@ -5,17 +5,28 @@ import ExistingWallet from "@/components/ExistingWallet";
 import { Toaster } from "@/components/ui/sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 export default function Wallets() {
-  const solanawallets = JSON.parse(localStorage.getItem("solanawallets") || "[]");
-  const ethwallets = JSON.parse(localStorage.getItem("ethwallets") || "[]");
   const router = useRouter();
 
-  if (solanawallets.length !== 0 || ethwallets.length !== 0) {
-      toast.warning("Wallet already exists")
-      router.replace("/");
-  };
+  useEffect(() => {
+    const loadWallets = () => {
+      const solana = JSON.parse(localStorage.getItem("solanawallets") || "[]");
+      const eth = JSON.parse(localStorage.getItem("ethwallets") || "[]");
+
+      if (solana.length !== 0 || eth.length !== 0) {
+        toast.warning("Wallet already exists");
+        router.replace("/");
+      }
+    };
+
+    loadWallets();
+
+    window.addEventListener("walletsUpdated", loadWallets);
+    return () => window.removeEventListener("walletsUpdated", loadWallets);
+  }, [router])
 
   return (
     <div>
